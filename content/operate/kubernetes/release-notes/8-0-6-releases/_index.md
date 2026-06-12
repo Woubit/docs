@@ -8,7 +8,7 @@ description: Releases with support for Redis Enterprise Software 8.0.6
 hideListLinks: true
 linkTitle: 8.0.6 releases
 title: Redis Enterprise for Kubernetes 8.0.6 release notes
-weight: 1
+weight: 88
 ---
 
 Redis Enterprise for Kubernetes 8.0.6 includes bug fixes, enhancements, and support for Redis Enterprise Software 8.0.6. The latest release is 8.0.6-8 with support for Redis Enterprise Software version 8.0.6-54.
@@ -18,6 +18,8 @@ Redis Enterprise for Kubernetes 8.0.6 includes bug fixes, enhancements, and supp
 {{<table-children columnNames="Version&nbsp;(Release&nbsp;date)&nbsp;,Major changes" columnSources="LinkTitle,Description" enableLinks="LinkTitle">}}
 
 ## Known limitations
+
+- **Expired license causes pod readiness failures, blocking recovery and upgrades** <!--RED-185977--> If a pod is stuck during upgrade, manually update the licenses via the REST API.
 
 - **SSO configuration doesn't work with IPv6 or dual stack (IPv4/IPv6) clusters.** <!--RED-180550-->
 
@@ -31,7 +33,7 @@ Redis Enterprise for Kubernetes 8.0.6 includes bug fixes, enhancements, and supp
 
 - **REAADB changes might fail with "gateway timeout" errors, mostly on OpenShift (RED-103048)** Retry the operation.
 
-- **Creating two databases with the same name directly on Redis Enterprise software will cause the service to be deleted and the database will not be available (RED-99997)** Avoid duplicating database names. Database creation via K8s has validation in place to prevent this.
+- **Creating two databases with the same name directly in the Redis Enterprise cluster manager UI will cause the service to be deleted and the database will not be available (RED-99997)** Avoid duplicating database names. The admission controller prevents duplicate database names when databases are created via the Kubernetes operator.
 
 - **Installing the operator bundle produces warning: `Warning: would violate PodSecurity "restricted: v1.24"` (RED-97381)** Ignore the warning. This issue is documented as benign on official Red Hat documentation.
 

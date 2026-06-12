@@ -4,17 +4,14 @@ acl_categories:
 - '@stream'
 - '@slow'
 arguments:
-- display_text: key
-  key_spec_index: 0
+- key_spec_index: 0
   name: key
   type: key
 - arguments:
-  - display_text: full
-    name: full
+  - name: full
     token: FULL
     type: pure-token
-  - display_text: count
-    name: count
+  - name: count
     optional: true
     token: COUNT
     type: integer
@@ -46,6 +43,11 @@ history:
     `entries-read` and `lag` fields
 - - 7.2.0
   - Added the `active-time` field, and changed the meaning of `seen-time`.
+- - 8.6.0
+  - Added the `idmp-duration`, `idmp-maxsize`, `pids-tracked`, `iids-tracked`, `iids-added`
+    and `iids-duplicates` fields for IDMP tracking.
+- - 8.8.0
+  - Added the `nacked-count` field to consumer groups in the `FULL` output.
 key_specs:
 - RO: true
   access: true
@@ -80,6 +82,17 @@ The informative details provided by this command are:
 * **first-entry**: the ID and field-value tuples of the first entry in the stream
 * **last-entry**: the ID and field-value tuples of the last entry in the stream
 
+### IDMP (Idempotent Message Processing) fields
+
+When IDMP is configured for the stream using [`XCFGSET`]({{< relref "/commands/xcfgset" >}}), the following additional fields are included:
+
+* **idmp-duration**: the duration in seconds that idempotent IDs are retained in the stream's IDMP map
+* **idmp-maxsize**: the maximum number of idempotent IDs kept for each producer in the stream's IDMP map
+* **pids-tracked**: the number of unique producer IDs currently being tracked
+* **iids-tracked**: the total number of idempotent IDs currently stored across all producers
+* **iids-added**: the total count of idempotent IDs that have been added to the stream during its lifetime
+* **iids-duplicates**: the total count of duplicate messages that were detected and prevented by IDMP
+
 ### The `FULL` modifier
 
 The optional `FULL` modifier provides a more verbose reply.
@@ -95,11 +108,12 @@ The following information is provided for each of the groups:
 * **pel-count**: the length of the group's pending entries list (PEL), which are messages that were delivered but are yet to be acknowledged
 * **pending**: an array with pending entries information (see below)
 * **consumers**: an array with consumers information (see below)
+* **nacked-count**: the number of entries currently in the NACKed portion of the PEL. See the [`XNACK` command page]({{< relref "/commands/xnack" >}}) for more details. Added in Redis 8.8.
 
 The following information is provided for each pending entry:
 
 1. The ID of the message.
-2. The name of the consumer that fetched the message and has still to acknowledge it. We call it the current *owner* of the message.
+2. The name of the consumer that fetched the message and has yet to acknowledge it. We call it the current *owner* of the message. For messages that have been released back to the group using [`XNACK`]({{< relref "/commands/xnack" >}}), this field will be an empty string.
 3. The UNIX timestamp of when the message was delivered to this consumer.
 4. The number of times this message was delivered.
 
@@ -119,7 +133,20 @@ The default `COUNT` is 10 and a `COUNT` of 0 means that all entries will be retu
 
 ## Examples
 
-Default reply:
+Setting up a stream with IDMP:
+
+```
+> XADD mystream * message apple
+"1638125133432-0"
+> XADD mystream * message banana
+"1638125141232-0"
+> XCFGSET mystream DURATION 100 MAXSIZE 100
+OK
+> XADD mystream IDMP producer1 msg1 * field value
+"1638125150000-0"
+```
+
+Default reply (with IDMP configured):
 
 ```
 > XINFO STREAM mystream
@@ -137,14 +164,26 @@ Default reply:
 12) (integer) 2
 13) "recorded-first-entry-id"
 14) "1719505260513-0"
-15) "groups"
-16) (integer) 1
-17) "first-entry"
-18) 1) "1638125133432-0"
+15) "idmp-duration"
+16) (integer) 100
+17) "idmp-maxsize"
+18) (integer) 100
+19) "pids-tracked"
+20) (integer) 1
+21) "iids-tracked"
+22) (integer) 1
+23) "iids-added"
+24) (integer) 1
+25) "iids-duplicates"
+26) (integer) 0
+27) "groups"
+28) (integer) 1
+29) "first-entry"
+30) 1) "1638125133432-0"
     2) 1) "message"
        2) "apple"
-19) "last-entry"
-20) 1) "1638125141232-0"
+31) "last-entry"
+32) 1) "1638125141232-0"
     2) 1) "message"
        2) "banana"
 ```
@@ -216,9 +255,9 @@ OK
                      3) (integer) 1
 ```
 
-## Redis Enterprise and Redis Cloud compatibility
+## Redis Software and Redis Cloud compatibility
 
-| Redis<br />Enterprise | Redis<br />Cloud | <span style="min-width: 9em; display: table-cell">Notes</span> |
+| Redis<br />Software | Redis<br />Cloud | <span style="min-width: 9em; display: table-cell">Notes</span> |
 |:----------------------|:-----------------|:------|
 | <span title="Supported">&#x2705; Standard</span><br /><span title="Supported"><nobr>&#x2705; Active-Active</nobr></span> | <span title="Supported">&#x2705; Standard</span><br /><span title="Supported"><nobr>&#x2705; Active-Active</nobr></span> |  |
 

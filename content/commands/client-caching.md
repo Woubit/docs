@@ -46,7 +46,7 @@ Please check the
 [client side caching documentation]({{< relref "/develop/clients/client-side-caching" >}}) for
 background information.
 
-When tracking is enabled Redis, using the [`CLIENT TRACKING`]({{< relref "/commands/client-tracking" >}}) command, it is
+When tracking is enabled in Redis, using the [`CLIENT TRACKING`]({{< relref "/commands/client-tracking" >}}) command, it is
 possible to specify the `OPTIN` or `OPTOUT` options, so that keys
 in read only commands are not automatically remembered by the server to
 be invalidated later. When we are in `OPTIN` mode, we can enable the
@@ -59,9 +59,9 @@ Basically the command sets a state in the connection, that is valid only
 for the next command execution, that will modify the behavior of client
 tracking.
 
-## Redis Enterprise and Redis Cloud compatibility
+## Redis Software and Redis Cloud compatibility
 
-| Redis<br />Enterprise | Redis<br />Cloud | <span style="min-width: 9em; display: table-cell">Notes</span> |
+| Redis<br />Software | Redis<br />Cloud | <span style="min-width: 9em; display: table-cell">Notes</span> |
 |:----------------------|:-----------------|:------|
 | <span title="Supported">&#x2705; Standard</span><br /><span title="Supported"><nobr>&#x2705; Active-Active</nobr></span> | <span title="Supported">&#x2705; Standard</span><br /><span title="Supported"><nobr>&#x2705; Active-Active</nobr></span> |  |
 

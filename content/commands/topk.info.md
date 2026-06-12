@@ -49,9 +49,9 @@ TOPK.INFO topk
 8) "0.92500000000000004"
 ```
 
-## Redis Enterprise and Redis Cloud compatibility
+## Redis Software and Redis Cloud compatibility
 
-| Redis<br />Enterprise | Redis<br />Cloud | <span style="min-width: 9em; display: table-cell">Notes</span> |
+| Redis<br />Software | Redis<br />Cloud | <span style="min-width: 9em; display: table-cell">Notes</span> |
 |:----------------------|:-----------------|:------|
 | <span title="Supported">&#x2705; Supported</span><br /> | <span title="Supported">&#x2705; Flexible & Annual</span><br /><span title="Supported">&#x2705; Free & Fixed</nobr></span> |  |
 
@@ -70,7 +70,7 @@ One of the following:
 
 One of the following:
 
-* [Array reply]({{< relref "/develop/reference/protocol-spec#arrays" >}}) of [simple string]({{< relref "/develop/reference/protocol-spec#simple-strings" >}}) and [integer]({{< relref "/develop/reference/protocol-spec#integers" >}}) pairs. For decay, a [double reply]({{< relref "/develop/reference/protocol-spec#doubles" >}}) is used to represent the floating point value.
+* [A map]({{< relref "/develop/reference/protocol-spec#maps" >}}) of [simple string]({{< relref "/develop/reference/protocol-spec#simple-strings" >}}) and [integer]({{< relref "/develop/reference/protocol-spec#integers" >}}) pairs. For decay, a [double reply]({{< relref "/develop/reference/protocol-spec#doubles" >}}) is used to represent the floating point value.
 * [Simple error reply]({{< relref "/develop/reference/protocol-spec#simple-errors" >}}) in these cases: incorrect number of arguments, non-existant key, or key of the incorrect type.
 
 {{< /multitabs >}}

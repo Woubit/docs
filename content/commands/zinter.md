@@ -4,39 +4,35 @@ acl_categories:
 - '@sortedset'
 - '@slow'
 arguments:
-- display_text: numkeys
-  name: numkeys
+- name: numkeys
   type: integer
-- display_text: key
-  key_spec_index: 0
+- key_spec_index: 0
   multiple: true
   name: key
   type: key
-- display_text: weight
-  multiple: true
+- multiple: true
   name: weight
   optional: true
   token: WEIGHTS
   type: integer
 - arguments:
-  - display_text: sum
-    name: sum
+  - name: sum
     token: SUM
     type: pure-token
-  - display_text: min
-    name: min
+  - name: min
     token: MIN
     type: pure-token
-  - display_text: max
-    name: max
+  - name: max
     token: MAX
+    type: pure-token
+  - name: count
+    token: COUNT
     type: pure-token
   name: aggregate
   optional: true
   token: AGGREGATE
   type: oneof
-- display_text: withscores
-  name: withscores
+- name: withscores
   optional: true
   token: WITHSCORES
   type: pure-token
@@ -60,27 +56,34 @@ complexity: O(N*K)+O(M*log(M)) worst case with N being the smallest input sorted
 description: Returns the intersect of multiple sorted sets.
 group: sorted-set
 hidden: false
+history:
+- - 8.8.0
+  - Added `COUNT` aggregate option.
 key_specs:
-- RO: true
-  access: true
-  begin_search:
-    spec:
-      index: 1
-    type: index
+- begin_search:
+    index:
+      pos: 1
   find_keys:
-    spec:
+    keynum:
       firstkey: 1
       keynumidx: 0
-      keystep: 1
-    type: keynum
+      step: 1
+  flags:
+  - RO
+  - ACCESS
 linkTitle: ZINTER
 railroad_diagram: /images/railroad/zinter.svg
 since: 6.2.0
 summary: Returns the intersect of multiple sorted sets.
 syntax_fmt: "ZINTER numkeys key [key ...] [WEIGHTS\_weight [weight ...]]\n  [AGGREGATE\_\
-  <SUM | MIN | MAX>] [WITHSCORES]"
+  <SUM | MIN | MAX | COUNT>] [WITHSCORES]"
 title: ZINTER
 ---
+{{< note >}}
+This command's behavior varies in clustered Redis environments. See the [multi-key operations]({{< relref "/develop/using-commands/multi-key-operations" >}}) page for more information.
+{{< /note >}}
+
+
 This command is similar to [`ZINTERSTORE`]({{< relref "/commands/zinterstore" >}}), but instead of storing the resulting
 sorted set, it is returned to the client.
 
@@ -98,9 +101,9 @@ ZINTER 2 zset1 zset2
 ZINTER 2 zset1 zset2 WITHSCORES
 {{% /redis-cli %}}
 
-## Redis Enterprise and Redis Cloud compatibility
+## Redis Software and Redis Cloud compatibility
 
-| Redis<br />Enterprise | Redis<br />Cloud | <span style="min-width: 9em; display: table-cell">Notes</span> |
+| Redis<br />Software | Redis<br />Cloud | <span style="min-width: 9em; display: table-cell">Notes</span> |
 |:----------------------|:-----------------|:------|
 | <span title="Supported">&#x2705; Standard</span><br /><span title="Supported"><nobr>&#x2705; Active-Active</nobr></span> | <span title="Supported">&#x2705; Standard</span><br /><span title="Supported"><nobr>&#x2705; Active-Active</nobr></span> |  |
 

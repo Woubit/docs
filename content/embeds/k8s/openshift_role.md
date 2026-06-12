@@ -1,4 +1,5 @@
 ```yaml
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -14,6 +15,8 @@ rules:
     verbs:
       - create
       - get
+      - list
+      - watch
       - update
       - patch
       - delete

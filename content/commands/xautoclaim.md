@@ -97,6 +97,8 @@ However, note that you may want to continue calling `XAUTOCLAIM` even after the 
 Note that only messages that are idle longer than `<min-idle-time>` are claimed, and claiming a message resets its idle time.
 This ensures that only a single consumer can successfully claim a given pending message at a specific instant of time and trivially reduces the probability of processing the same message multiple times.
 
+Messages that have been released back to the group using [`XNACK`]({{< relref "/commands/xnack" >}}) are immediately claimable since their delivery time is set to 0, satisfying any minimum idle time requirement.
+
 While iterating the PEL, if `XAUTOCLAIM` stumbles upon a message which doesn't exist in the stream anymore (either trimmed or deleted by [`XDEL`]({{< relref "/commands/xdel" >}})) it does not claim it, and deletes it from the PEL in which it was found. This feature was introduced in Redis 7.0.
 These message IDs are returned to the caller as a part of `XAUTOCLAIM`s reply.
 
@@ -119,9 +121,9 @@ The consumer "Alice" from the "mygroup" group acquires ownership of these messag
 Note that the stream ID returned in the example is `0-0`, indicating that the entire stream was scanned.
 We can also see that `XAUTOCLAIM` did not stumble upon any deleted messages (the third reply element is an empty array).
 
-## Redis Enterprise and Redis Cloud compatibility
+## Redis Software and Redis Cloud compatibility
 
-| Redis<br />Enterprise | Redis<br />Cloud | <span style="min-width: 9em; display: table-cell">Notes</span> |
+| Redis<br />Software | Redis<br />Cloud | <span style="min-width: 9em; display: table-cell">Notes</span> |
 |:----------------------|:-----------------|:------|
 | <span title="Supported">&#x2705; Standard</span><br /><span title="Supported"><nobr>&#x2705; Active-Active</nobr></span> | <span title="Supported">&#x2705; Standard</span><br /><span title="Supported"><nobr>&#x2705; Active-Active</nobr></span> |  |
 
